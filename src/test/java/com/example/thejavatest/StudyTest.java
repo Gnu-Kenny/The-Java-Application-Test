@@ -14,6 +14,7 @@ class StudyTest {
     }
 
     @Test
+    @DisplayName("스터디 만들기")
     void create1() {
         System.out.println("create1");
     }
