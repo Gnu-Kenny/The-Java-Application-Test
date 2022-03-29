@@ -23,11 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class StudyTest {
+
+    int value = 1;
+
     @Test
     @DisplayName("스터디 만들기")
     @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_11})
-    @DisabledOnOs(value = {OS.MAC})
+    @EnabledOnOs(value = {OS.MAC})
     void create_new_study(){
         // 조건문
         String test_env = System.getenv("TEST_ENV");
@@ -44,6 +48,9 @@ class StudyTest {
             Study actual = new Study(100);
             assertThat(actual.getLimit(), is(greaterThan(0)));
         });
+        value ++;
+        System.out.println("value : " + value);
+        System.out.println(this);
         System.out.println("test successfully");
     }
 
@@ -51,9 +58,9 @@ class StudyTest {
     @DisabledOnOs(OS.OTHER)
     @DisplayName("스터디 다시 만들기")
     void create_new_study_again() {
-        System.out.println(System.getProperty("os.name").toLowerCase());
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Study(-10));
-        assertEquals("limit은 0보다 더 커야한다.", exception.getMessage());
+        value ++;
+        System.out.println("value : " + value);
+        System.out.println(this);
     }
 
     @Test
@@ -61,7 +68,7 @@ class StudyTest {
     void create_new_study_timeout() {
         assertTimeoutPreemptively(Duration.ofMillis(100), () -> {
             new Study(10);
-            Thread.sleep(300);
+//            Thread.sleep(300);
         });
         //assertTimeoutPreemptively 파라미터 내부에 ThreadLocal을 사용하는 코드가 있으면 예상치 못한 에러가 발생할 수 있다.
         //JUnit 문서 참고) 스프링 트랙잭션 처리는 ThreadLocal을 기본으로 한다.
@@ -89,17 +96,17 @@ class StudyTest {
             return new Study(argumentsAccessor.getInteger(0),argumentsAccessor.getString(1));
         }
     }
-//
-//    @BeforeAll // 테스트전 딱 한번, 반드시 static를 붙여야함
-//    static void beforeAll() {
-//        System.out.println("before all");
-//    }
-//
-//    @AfterAll
-//    static void afterAll() {
-//        System.out.println("after all");
-//    }
-//
+
+    @BeforeAll // 테스트전 딱 한번, 반드시 static를 붙여야함
+    void beforeAll() {
+        System.out.println("before all");
+    }
+
+    @AfterAll
+    void afterAll() {
+        System.out.println("after all");
+    }
+
 //    @BeforeEach
 //    void beforeEach() {
 //        System.out.println("beforeEach");
