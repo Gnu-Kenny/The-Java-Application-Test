@@ -36,7 +36,7 @@ class StudyTest {
         System.out.println("test successfully");
     }
 
-    @Test
+    @FastTest
     @DisabledOnOs(OS.OTHER)
     @DisplayName("스터디 다시 만들기")
     void create_new_study_again() {
