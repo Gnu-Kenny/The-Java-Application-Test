@@ -1,8 +1,12 @@
 package com.example.thejavatest;
 
+import net.bytebuddy.dynamic.TargetType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ArgumentConversionException;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.converter.SimpleArgumentConverter;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.hamcrest.Matchers.*;
@@ -67,9 +71,19 @@ class StudyTest {
     }
     @DisplayName("스터디 반복해서 만들기 - 다른 파라미터")
     @ParameterizedTest(name = "{index} message={0}")
-    @ValueSource(strings = {"날씨가", "많이", "추워지고", "있어요."})
-    void parameterizedTest(String message){
-        System.out.println(message);
+    @ValueSource(ints = {10, 20, 40})
+    void parameterizedTest(@ConvertWith(StudyConverter.class) Study study){
+        System.out.println(study.getLimit());
+    }
+
+    static class StudyConverter extends SimpleArgumentConverter {
+
+
+        @Override
+        protected Object convert(Object source, Class<?> targetType) throws ArgumentConversionException {
+            assertEquals(Study.class, targetType, "Can only convert to Study");
+            return new Study(Integer.parseInt(source.toString()));
+        }
     }
 //
 //    @BeforeAll // 테스트전 딱 한번, 반드시 static를 붙여야함
